@@ -10,7 +10,7 @@ import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import random
 
-sys.path.append('/nfs0/BB/Hendrix_Lab/Hops/svgwrite/svgwrite-1.2.1/')
+sys.path.append('/path/to/svgwrite/svgwrite-1.2.1/')
 import svgwrite
 from svgwrite import cm, mm
 
@@ -78,7 +78,6 @@ def assessOverlap(hmmCoordDict):
         scaledGeneLen = int(scaledHopGeneLen)
         # countArray = [0]*scaledGeneLen
         countArray = [0]*hopGeneLen
-        
         for accessionID,accessionDesc,domainStart,domainStop,scaledStart,scaledStop in hmmCoordDict[(hopGeneID,hopGeneLen,scaledHopGeneLen)]:
             maxCount = overlap(countArray,domainStart,domainStop,maxCountList)
             maxCountList.append(maxCount)
@@ -87,6 +86,7 @@ def assessOverlap(hmmCoordDict):
             # print(hopGeneID,maximumCount)
             filteredGeneDict[hopGeneID] = maximumCount
     return(filteredGeneDict)
+
 
 def countDomains(hmmCoordDict,filteredGeneDict):
     domainCountDict = {}
@@ -126,7 +126,6 @@ def createColorPalette(geneDict,geneID,domainCount):
 
 def drawGene(hmmCoordDict,filteredGeneDict,domainCountDict,strandInfo):
     for hopGeneID,hopGeneLen,scaledHopGeneLen in hmmCoordDict:
-        #hmmCoordDict[(hopGeneID,hopGeneLen,scaledHopGeneLen)].sort(key=lambda x:x[2], reverse=False)
         if hopGeneID in filteredGeneDict and hopGeneID in domainCountDict:
             domCount = domainCountDict[hopGeneID]
             colorDict = {}
@@ -225,8 +224,6 @@ def drawDomains(geneID,countArray,domStart,domStop,geneLen,accID,accDesc,domainC
     domainDrawingStopPos = domainDrawingStart + domainDrawingLength
     #print domainDrawingStart,domainDrawingStopPos,domainDrawingLength
 
-    # fig.add(fig.rect((domStart,(maxCount*(-35))-2.5), (alignLen,35),fill=domainColor,rx=2, ry=2))
-    ## fig.add(fig.rect((domStart,(maxCount*(-35))+50), (alignLen,35),fill=domainColor,rx=2, ry=2))
     if strand == '-':
         revStrandStart = geneDrawingLength - domainDrawingStopPos
         fig.add(fig.rect((revStrandStart,(maxCount*(-35))+50), (domainDrawingLength,35),fill=domainColor,rx=2, ry=2))

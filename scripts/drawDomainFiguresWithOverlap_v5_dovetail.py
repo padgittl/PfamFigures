@@ -10,7 +10,7 @@ import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import random
 
-sys.path.append('/nfs0/BB/Hendrix_Lab/Hops/svgwrite/svgwrite-1.2.1/')
+sys.path.append('/path/to/svgwrite/svgwrite-1.2.1/')
 import svgwrite
 from svgwrite import cm, mm
 
@@ -127,7 +127,6 @@ def countDomains(hmmCoordDict,filteredGeneDict):
 def drawGene(hmmCoordDict,filteredGeneDict,domainCountDict,strandInfo):
     colors = ['#67001f','#b2182b','#d6604d','#f4a582','#fddbc7','#f7f7f7','#d1e5f0','#92c5de','#4393c3','#2166ac','#053061']
     for hopGeneID,hopGeneLen,scaledHopGeneLen in hmmCoordDict:
-        #hmmCoordDict[(hopGeneID,hopGeneLen,scaledHopGeneLen)].sort(key=lambda x:x[2], reverse=False)
         if hopGeneID in filteredGeneDict and hopGeneID in domainCountDict:
             maximumDomainCount = filteredGeneDict[hopGeneID]
             domCount = domainCountDict[hopGeneID]
@@ -146,28 +145,22 @@ def drawGene(hmmCoordDict,filteredGeneDict,domainCountDict,strandInfo):
             countArray = [0]*hopGeneLen
 
             geneDrawingLength = 500
-            # fig.add(fig.rect((1,figHeight-150), (scaledGeneLen,30),fill='#2166ac', rx=2, ry=2))
             fig.add(fig.rect((1,figHeight-150), (geneDrawingLength,30),fill='#2166ac', rx=2, ry=2))
-            # fig.add(fig.rect((0, (figHeight-75)), (30,12),fill='#2166ac', rx=1, ry=1))
             fig.add(fig.rect((0, (figHeight-75)), (30,12),fill='#2166ac', rx=1, ry=1))
             
             fig.add(fig.text(hopGeneID,
                                  insert=(40, (figHeight-63)),
                                  fill='black', font_size='16px')
             )
-            #fig.add(fig.text(hopGeneID,insert=(0, (figHeight-63)),fill='black', font_size='16px'))
 
             accessions = {}
             printDict = {}
             OUT = open(hopGeneID + '.pfam.txt','w')
             if domCount <= 11:
                 colorStuff = createColorPalette(hmmCoordDict[(hopGeneID,hopGeneLen,scaledHopGeneLen)],hopGeneID)
-                # print(hopGeneID,maximumDomainCount)
                 for accessionID,accessionDesc,domainStart,domainStop,scaledStart,scaledStop in hmmCoordDict[(hopGeneID,hopGeneLen,scaledHopGeneLen)]:
                     if accessionID not in printDict:
                         printDict[accessionID] = 1
-                        #print hopGeneID,accessionID,accessionDesc
-                        #print(hopGeneID,accessionID,accessionDesc,domainStart,domainStop,scaledStart,scaledStop)
                         OUT.write("%s\t%s\t%s\n" % (hopGeneID,accessionID,accessionDesc))
                     if accessionID not in accessionDict:
                         domainState += 1.15
@@ -183,20 +176,12 @@ def drawGene(hmmCoordDict,filteredGeneDict,domainCountDict,strandInfo):
                             
                             legendOffset = scaledGeneLen + 25
                             
-                            #fig.add(fig.rect((0, (100+colorState)), (30,12),fill=domainColor, rx=1, ry=1))
-                            #fig.add(fig.text(accessionInfo,
-                            #                 insert=(40, 111.75+colorState),
-                            #                 fill='black', font_size='16px')
-                            #        )
-
                     drawDomains(hopGeneID,countArray,domainStart,domainStop,hopGeneLen,accessionID,accessionDesc,domainColor,domainState,fig,accessionInfo,otherAccessionDict,figHeight,geneDrawingLength,strandInfo)
 
             if domCount > 11:
                 for accessionID,accessionDesc,domainStart,domainStop,scaledStart,scaledStop in hmmCoordDict[(hopGeneID,hopGeneLen,scaledHopGeneLen)]:
-                    # print(hopGeneID,accessionID,accessionDesc,domainStart,domainStop,scaledStart,scaledStop)
                     if accessionID not in printDict:
                         printDict[accessionID] = 1
-                        #print hopGeneID,accessionID,accessionDesc
                         OUT.write("%s\t%s\t%s\n" % (hopGeneID,accessionID,accessionDesc))
                     if accessionID not in accessionDict:
                         domainState += 1.15
@@ -209,7 +194,6 @@ def drawGene(hmmCoordDict,filteredGeneDict,domainCountDict,strandInfo):
                         accessionInfo = accessionID + "\t" + accessionDesc
                         colorDict[accessionID] = randomColor
 
-                        #print(randomColor)
                         legendTextOffset += 17
                         colorState = legendTextOffset
 
@@ -229,8 +213,6 @@ def drawDomains(geneID,countArray,domStart,domStop,geneLen,accID,accDesc,domainC
     domainDrawingStopPos = domainDrawingStart + domainDrawingLength
     strand = strandInfo[geneID]
 
-    # fig.add(fig.rect((domStart,(state*(-35))+(figHeight-112.5)), (alignLen,35),fill=domainColor,rx=2, ry=2))
-    ## fig.add(fig.rect((domainDrawingStart,(state*(-35))+(figHeight-112.5)), (domainDrawingLength,35),fill=domainColor,rx=2, ry=2))
     if strand == '-':
         revStrandStart = geneDrawingLength - domainDrawingStopPos
         fig.add(fig.rect((revStrandStart,(state*(-35))+(figHeight-112.5)), (domainDrawingLength,35),fill=domainColor,rx=2, ry=2))
@@ -240,9 +222,7 @@ def drawDomains(geneID,countArray,domStart,domStop,geneLen,accID,accDesc,domainC
 
     if accID not in otherAccessionDict:
         otherAccessionDict[accID] = 1
-        # fig.add(fig.rect((0, (100+state)), (30,12),fill=domainColor, rx=1, ry=1))
         fig.add(fig.rect(((legendOffset), ((state*(-35))+(figHeight-97))), (12,12),fill=domainColor, rx=1, ry=1))
-        # fig.add(fig.text(accessionInfo,insert=((legendOffset + 10), ((state*(-35))+(figHeight-85))),fill='black', font_size='16px'))
         fig.add(fig.text(accessionInfo,insert=((legendOffset + 20), ((state*(-35))+(figHeight-85))),fill='black', font_size='16px'))
     fig.save()
 
